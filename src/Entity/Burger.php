@@ -12,35 +12,35 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: BurgerRepository::class)]
  #[ApiResource (
-    collectionOperations:[
-        "get"=>[
-        'method' => 'get',
-        'status' => Response::HTTP_OK,
-        'normalization_context' => ['groups' => ['burgers:read:simple']],
-        ],
-        "post"=>[
-        'method' => 'post',
-        "security" => "is_granted('ROLE_GESTIONNAIRE')",
-        "security_message" => "Vous n'êtes pas autorisé à utiliser ce service",
-        'denormalization_context' => ['groups' => ['collection:post_burger:read']],
-        
-        ]
-        ],
-        itemOperations:[
-                        "get"=>[    
-                        'method' => 'get',
-                        'normalization_context' => ['groups' => ['item:get_burger:read']],
-                        ],
-                        "put"=>[
-                            "security" => "is_granted('ROLE_GESTIONNAIRE')",
-                            "security_message"=>"Vous n'avez pas access à cette Ressource",
-                            "normalization_context" => ["groups" => ["item:put_burger:read"]],
-                            "denormalization_context" => ["groups" => ["item:put_burger:write"]]
-                           
-                            ],
-                    ] ,
-  attributes: ["pagination_items_per_page" => 5]
-   )]
+                   collectionOperations:[
+                       "get"=>[
+                       'method' => 'get',
+                       'status' => Response::HTTP_OK,
+                       'normalization_context' => ['groups' => ['burgers:read:simple']],
+                       ],
+                       "post"=>[
+                       'method' => 'post',
+                       "security" => "is_granted('ROLE_GESTIONNAIRE')",
+                       "security_message" => "Vous n'êtes pas autorisé à utiliser ce service",
+                       'denormalization_context' => ['groups' => ['collection:post_burger:read']],
+                       
+                       ]
+                       ],
+                       itemOperations:[
+                                       "get"=>[    
+                                       'method' => 'get',
+                                       'normalization_context' => ['groups' => ['item:get_burger:read']],
+                                       ],
+                                       "put"=>[
+                                           "security" => "is_granted('ROLE_GESTIONNAIRE')",
+                                           "security_message"=>"Vous n'avez pas access à cette Ressource",
+                                           "normalization_context" => ["groups" => ["item:put_burger:read"]],
+                                           "denormalization_context" => ["groups" => ["item:put_burger:write"]]
+                                          
+                                           ],
+                                   ] ,
+                 attributes: ["pagination_items_per_page" => 5]
+                  )]
  
 
 class Burger extends Produits
@@ -55,10 +55,14 @@ class Burger extends Produits
     public function __construct()
     {
         $this->menuBurgers = new ArrayCollection();
+        $this->commandeBurgers = new ArrayCollection();
     }
 
      #[ORM\ManyToOne(targetEntity: Gestionnaire::class, inversedBy: 'burgers')]
-    private $gestionnaire; 
+    private $gestionnaire;
+
+     #[ORM\OneToMany(mappedBy: 'burger', targetEntity: CommandeBurger::class)]
+     private $commandeBurgers; 
 
     
 
@@ -122,6 +126,36 @@ class Burger extends Produits
             // set the owning side to null (unless already changed)
             if ($menuBurger->getBurger() === $this) {
                 $menuBurger->setBurger(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CommandeBurger>
+     */
+    public function getCommandeBurgers(): Collection
+    {
+        return $this->commandeBurgers;
+    }
+
+    public function addCommandeBurger(CommandeBurger $commandeBurger): self
+    {
+        if (!$this->commandeBurgers->contains($commandeBurger)) {
+            $this->commandeBurgers[] = $commandeBurger;
+            $commandeBurger->setBurger($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommandeBurger(CommandeBurger $commandeBurger): self
+    {
+        if ($this->commandeBurgers->removeElement($commandeBurger)) {
+            // set the owning side to null (unless already changed)
+            if ($commandeBurger->getBurger() === $this) {
+                $commandeBurger->setBurger(null);
             }
         }
 

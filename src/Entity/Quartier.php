@@ -6,19 +6,18 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\QuartierRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints\Cascade;
 
 #[ORM\Entity(repositoryClass: QuartierRepository::class)]
 #[ApiResource(
     collectionOperations:[
         "get"=>[
-            "method"=>"get",
-            "normalization_context"=>["groups"=>["collection:quartier_get:read"]]
+            "normalization_context" =>["groups"=>["quartier:read"]]
         ],
         "post"=>[
-            
-                "method"=>"post",
-                "denormalization_context"=>["groups"=>["collection:quartier_post:write"]],
-                "normalization_context"=>["groups"=>["collection:quartier_post:read"]]
+        
+                "denormalization_context" => ["groups"=>["quartier:write"]],
+                "normalization_context" => ["groups"=>["quartier:read"]]
 
                   ]
          ],
@@ -40,28 +39,15 @@ class Quartier
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups(
-        "collection:quartier_post:write","collection:quartier_post:read",
-        "collection:quartier_get:read","item:quartier_get:read",
-        "item:quartier_put:write","item:quartier_put:read"
-
-    )]
+    #[Groups("quartier:write")]
 
     private $id;
    
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Groups(
-        "collection:quartier_post:write",
-        "collection:quartier_post:read",
-
-    )]  
-      
-    private $libelle_quartier;
-    #[Groups(
-        "collection:quartier_post:write"
-        ,"collection:quartier_post:read",
-     )]
+    #[Groups("zone:write","quartier:write",)]      
+    private $libellequartier;
     #[ORM\ManyToOne(targetEntity: Zone::class, inversedBy: 'quartiers')]
+
     private $zone;
 
     public function getId(): ?int
@@ -69,17 +55,7 @@ class Quartier
         return $this->id;
     }
 
-    public function getLibelleQuartier(): ?string
-    {
-        return $this->libelle_quartier;
-    }
-
-    public function setLibelleQuartier(?string $libelle_quartier): self
-    {
-        $this->libelle_quartier = $libelle_quartier;
-
-        return $this;
-    }
+   
 
     public function getZone(): ?Zone
     {
@@ -89,6 +65,26 @@ class Quartier
     public function setZone(?Zone $zone): self
     {
         $this->zone = $zone;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of libellequartier
+     */ 
+    public function getLibellequartier()
+    {
+        return $this->libellequartier;
+    }
+
+    /**
+     * Set the value of libellequartier
+     *
+     * @return  self
+     */ 
+    public function setLibellequartier($libellequartier)
+    {
+        $this->libellequartier = $libellequartier;
 
         return $this;
     }

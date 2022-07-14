@@ -50,8 +50,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
 class Boisson extends Produits
 {
     #[ORM\ManyToMany(targetEntity: Taille::class, mappedBy: 'boissons')]
-    // #[Groups('tailles:write:simple','tailles:read:simple','boisson:write')]
+    #[Groups('tailles:write:simple','tailles:read:simple','boisson:write',)]
     private $tailles;
+
+    #[ORM\OneToMany(mappedBy: 'boisson', targetEntity: CommandeBoisson::class)]
+    private $commandeBoissons;
+
+   
 
     // #[ORM\Id]
     // #[ORM\GeneratedValue]
@@ -63,6 +68,7 @@ class Boisson extends Produits
     {
         $this->boissons = new ArrayCollection();
         $this->tailles = new ArrayCollection();
+        $this->commandeBoissons = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -92,6 +98,48 @@ class Boisson extends Produits
     {
         if ($this->tailles->removeElement($taille)) {
             $taille->removeBoisson($this);
+        }
+
+        return $this;
+    }
+
+    public function getCommandeBoisson(): ?CommandeBoisson
+    {
+        return $this->commandeBoisson;
+    }
+
+    public function setCommandeBoisson(?CommandeBoisson $commandeBoisson): self
+    {
+        $this->commandeBoisson = $commandeBoisson;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CommandeBoisson>
+     */
+    public function getCommandeBoissons(): Collection
+    {
+        return $this->commandeBoissons;
+    }
+
+    public function addCommandeBoisson(CommandeBoisson $commandeBoisson): self
+    {
+        if (!$this->commandeBoissons->contains($commandeBoisson)) {
+            $this->commandeBoissons[] = $commandeBoisson;
+            $commandeBoisson->setBoisson($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommandeBoisson(CommandeBoisson $commandeBoisson): self
+    {
+        if ($this->commandeBoissons->removeElement($commandeBoisson)) {
+            // set the owning side to null (unless already changed)
+            if ($commandeBoisson->getBoisson() === $this) {
+                $commandeBoisson->setBoisson(null);
+            }
         }
 
         return $this;

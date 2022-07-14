@@ -44,6 +44,9 @@ class Livraison
     #[ORM\ManyToOne(targetEntity: Livreur::class, inversedBy: 'livraisons')]
     private $livreur;
 
+    #[ORM\ManyToOne(targetEntity: Zone::class, inversedBy: 'livraisons')]
+    private $zone;
+
     public function __construct()
     {
         $this->commandes = new ArrayCollection();
@@ -104,6 +107,18 @@ class Livraison
     public function setLivreur(?Livreur $livreur): self
     {
         $this->livreur = $livreur;
+
+        return $this;
+    }
+
+    public function getZone(): ?Zone
+    {
+        return $this->zone;
+    }
+
+    public function setZone(?Zone $zone): self
+    {
+        $this->zone = $zone;
 
         return $this;
     }

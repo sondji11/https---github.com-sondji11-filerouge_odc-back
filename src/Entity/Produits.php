@@ -8,9 +8,10 @@ use Doctrine\ORM\Mapping\InheritanceType;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping\DiscriminatorColumn;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Serializer\Annotation\DiscriminatorMap;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
+use Symfony\Component\Serializer\Annotation\DiscriminatorMap;
 
 #[ORM\Entity(repositoryClass: ProduitsRepository::class)]
 
@@ -29,7 +30,8 @@ class Produits
 
     #[Groups([
     "menu:write" ,'menu:frite',
-    "menu:read:simple","collection:post_burger:read"])]
+    "menu:read:simple","collection:post_burger:read",
+    "commande:write:post", "commande:get:collection"])]
     protected $id;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
@@ -62,6 +64,14 @@ class Produits
         "post:read:menu"
     ])]
     private $gestionnaire;
+
+   
+
+    public function __construct()
+    {
+        $this->isAvailable = true;
+        $this->commande = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -149,4 +159,6 @@ class Produits
 
         return $this;
     }
+
+   
 }

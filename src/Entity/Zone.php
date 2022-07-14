@@ -2,39 +2,24 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use App\Repository\ZoneRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\ZoneRepository;
+use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
+
 #[ORM\Entity(repositoryClass: ZoneRepository::class)]
 #[ApiResource(
-    collectionOperations: [
-        "get" =>
-        [
-            "method" => "get",
-            "normalization_context" => ["groups" => ["collection_get:zone"]]
-        ],
-        "post" =>
-        [
-            "method" => "post",
-            "denormalization_context" => ["groups" => ["collection:zone_post:write"]],
-            "normalization_context" => ["groups" => ["collection:zone_post:read"]]
-
-        ]
+    normalizationContext: ['groups' => ["zone:read"]],
+    denormalizationContext: ['groups' => ["zone:write"]],
+    collectionOperations : [
+        "get",
+        "post"
     ],
-    itemOperations: [
-        'get' =>
-        [
-            "method" => "get",
-            "normalization_context" => ["groups" => ["item:zone_get:read"]]
-        ],"put"=>[
-            "method" => "put",
-            "denormalization_context" => ["groups" => ["item:zone_put:write"]],
-            "normalization_context" => ["groups" => ["item:zone_put:read"]]
-
-        ]
+    itemOperations : [
+        "put",
+        "get"
     ]
 
 )]
@@ -43,38 +28,30 @@ class Zone
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups(
-        "collection_get:zone","collection:zone_post:write",
-        "collection:zone_post:read","item:zone_get:read",
-        "item:zone_put:write"
-    )]
     private $id;
-   
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Groups("collection_get:zone","collection:zone_post:write",
-    "collection:zone_post:read","item:zone_get:read",
-    "item:zone_put:write")]
-    private $nom_zone;
-    #[Groups("collection_get:zone","collection:zone_post:write",
-    "collection:zone_post:read","item:zone_get:read",
-    "item:zone_put:write")]
+    #[ORM\Column(type:"string")]
+    #[Groups(["zone:write","zone:read"])]
+    private $nom ;
+    #[ORM\Column(type: 'integer')]
+    #[Groups(["zone:read","zone:write"])]
+    private $prix;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $prix_zone;
-    #[Groups("collection_get:zone","collection:zone_post:write",
-    "collection:zone_post:read","item:zone_get:read",
-    "item:zone_put:write")]
-
-    #[ORM\OneToMany(mappedBy: 'zone', targetEntity: Quartier::class)]
+    #[ORM\OneToMany(mappedBy: 'zone', targetEntity: Quartier::class,cascade:["persist"])]
+    #[Groups(["zone:read","zone:write"])]
     private $quartiers;
-
+        
     #[ORM\OneToMany(mappedBy: 'zone', targetEntity: Commande::class)]
+    #[Groups(["zone:read","zone:write"])]
     private $commandes;
+
+    #[ORM\OneToMany(mappedBy: 'zone', targetEntity: Livraison::class)]
+    private $livraisons;
 
     public function __construct()
     {
         $this->quartiers = new ArrayCollection();
         $this->commandes = new ArrayCollection();
+        $this->livraisons = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -82,29 +59,19 @@ class Zone
         return $this->id;
     }
 
-    public function getNomZone(): ?string
+    public function getNom(): ?string
     {
-        return $this->nom_zone;
+        return $this->nom;
     }
 
-    public function setNomZone(?string $nom_zone): self
+    public function setNom(?string $nom): self
     {
-        $this->nom_zone = $nom_zone;
+        $this->nom_zone = $nom;
 
         return $this;
     }
 
-    public function getPrixZone(): ?string
-    {
-        return $this->prix_zone;
-    }
-
-    public function setPrixZone(?string $prix_zone): self
-    {
-        $this->prix_zone = $prix_zone;
-
-        return $this;
-    }
+    
 
     /**
      * @return Collection<int, Quartier>
@@ -162,6 +129,56 @@ class Zone
                 $commande->setZone(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Livraison>
+     */
+    public function getLivraisons(): Collection
+    {
+        return $this->livraisons;
+    }
+
+    public function addLivraison(Livraison $livraison): self
+    {
+        if (!$this->livraisons->contains($livraison)) {
+            $this->livraisons[] = $livraison;
+            $livraison->setZone($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLivraison(Livraison $livraison): self
+    {
+        if ($this->livraisons->removeElement($livraison)) {
+            // set the owning side to null (unless already changed)
+            if ($livraison->getZone() === $this) {
+                $livraison->setZone(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get the value of prix
+     */ 
+    public function getPrix()
+    {
+        return $this->prix;
+    }
+
+    /**
+     * Set the value of prix
+     *
+     * @return  self
+     */ 
+    public function setPrix($prix)
+    {
+        $this->prix = $prix;
 
         return $this;
     }
