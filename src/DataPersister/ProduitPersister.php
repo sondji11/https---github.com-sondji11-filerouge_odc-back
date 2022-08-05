@@ -1,10 +1,5 @@
-<?php
-
-// src/DataPersister/UserDataPersister.php
-
+<?php   
 namespace App\DataPersister;
-
-
 use App\Entity\Produits;
 use App\Services\MailerService;
 use Doctrine\ORM\EntityManagerInterface;

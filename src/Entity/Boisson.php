@@ -49,14 +49,14 @@ use Symfony\Component\Serializer\Annotation\Groups;
 )]
 class Boisson extends Produits
 {
-    #[ORM\ManyToMany(targetEntity: Taille::class, mappedBy: 'boissons')]
-    #[Groups('tailles:write:simple','tailles:read:simple','boisson:write',)]
-    private $tailles;
-
+    
     #[ORM\OneToMany(mappedBy: 'boisson', targetEntity: CommandeBoisson::class)]
     private $commandeBoissons;
+    #[Groups('item:get_boissons')]
+    #[ORM\OneToMany(mappedBy: 'boisson', targetEntity: BoissonTaille::class)]
+    private  $boissonTailles;
 
-   
+  
 
     // #[ORM\Id]
     // #[ORM\GeneratedValue]
@@ -66,9 +66,9 @@ class Boisson extends Produits
 
     public function __construct()
     {
-        $this->boissons = new ArrayCollection();
-        $this->tailles = new ArrayCollection();
+        
         $this->commandeBoissons = new ArrayCollection();
+        $this->boissonTailles = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -76,32 +76,7 @@ class Boisson extends Produits
         return $this->id;
     }
 
-    /**
-     * @return Collection<int, Taille>
-     */
-    public function getTailles(): Collection
-    {
-        return $this->tailles;
-    }
-
-    public function addTaille(Taille $taille): self
-    {
-        if (!$this->tailles->contains($taille)) {
-            $this->tailles[] = $taille;
-            $taille->addBoisson($this);
-        }
-
-        return $this;
-    }
-
-    public function removeTaille(Taille $taille): self
-    {
-        if ($this->tailles->removeElement($taille)) {
-            $taille->removeBoisson($this);
-        }
-
-        return $this;
-    }
+   
 
     public function getCommandeBoisson(): ?CommandeBoisson
     {
@@ -145,6 +120,37 @@ class Boisson extends Produits
         return $this;
     }
 
+    /**
+     * @return Collection<int, BoissonTaille>
+     */
+    public function getBoissonTailles(): Collection
+    {
+        return $this->boissonTailles;
+    }
+
+    public function addBoissonTaille(BoissonTaille $boissonTaille): self
+    {
+        if (!$this->boissonTailles->contains($boissonTaille)) {
+            $this->boissonTailles->add($boissonTaille);
+            $boissonTaille->setBoisson($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBoissonTaille(BoissonTaille $boissonTaille): self
+    {
+        if ($this->boissonTailles->removeElement($boissonTaille)) {
+            // set the owning side to null (unless already changed)
+            if ($boissonTaille->getBoisson() === $this) {
+                $boissonTaille->setBoisson(null);
+            }
+        }
+
+        return $this;
+    }
+
+   
    
 
    

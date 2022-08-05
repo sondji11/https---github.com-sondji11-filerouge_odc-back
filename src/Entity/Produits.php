@@ -9,6 +9,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping\DiscriminatorColumn;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\Common\Collections\ArrayCollection;
+use phpDocumentor\Reflection\Types\Nullable;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Serializer\Annotation\DiscriminatorMap;
@@ -31,25 +32,25 @@ class Produits
     #[Groups([
     "menu:write" ,'menu:frite',
     "menu:read:simple","collection:post_burger:read",
-    "commande:write:post", "commande:get:collection"])]
+    "commande:write:post", "commande:get:collection","catalogue","item:getdetails",])]
     protected $id;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Groups(['item:get_boissons',"burgers:read:simple","collection:post_burger:read",'collection:post_boissons:read','menu:read:simple','menu:frite',"tailles:write:simple","menu:write"])]
+    #[ORM\Column(type: 'string')]
+    // #[Groups("collection:post_frites:read")]
+    #[Groups(['item:get_boissons',"burgers:read:simple","collection:post_burger:read",'collection:post_boissons:read','menu:read:simple','menu:frite',"tailles:write:simple","menu:write","collection:post_frites:read","catalogue",'boisson:read',"item:getdetails",])]
     protected $nom;
-    
+    #[Groups(['item:get_boissons',"burgers:read:simple","collection:post_burger:read",'collection:post_boissons:read','menu:read:simple','menu:frite',"tailles:write:simple","collection:post_frites:read","catalogue",'boisson:read',"item:getdetails"])]
     #[ORM\Column(type:'blob', nullable: true)]
     protected $image;
 
-    #[Groups(["burgers:read:simple", "collection:post_burger:read",'menu:frite','item:get_boissons',"tailles:write:simple"])]
+    #[Groups(["burgers:read:simple", "collection:post_burger:read",'menu:frite','item:get_boissons',"tailles:write:simple","collection:post_frites:read","catalogue","item:getdetails"])]
     #[ORM\Column(type: 'float', nullable: true)]
     protected $prix;
-    #[Groups(["burgers:read:simple","collection:post_burger:read"])]
+    #[Groups(["burgers:read:simple","collection:post_burger:read","item:get_details"])]
     #[ORM\Column(type: 'boolean', nullable: true)]
     protected $etat;
-
     #[SerializedName("image")]
-    #[Groups(["collection:post_burger:read","burgers:read:simple",'item:get_boissons','menu:frite','collection:post_boissons:read',"menu:write"])]
+    #[Groups(["collection:post_burger:read","burgers:read:simple",'item:get_boissons','menu:frite','collection:post_boissons:read',"menu:write","collection:post_frites:read",  ])]
 
     private string $fileImage;
 
@@ -61,9 +62,15 @@ class Produits
         "item:put_frites:read", "item:get_frites",
         "collection:post_boissons:read","boisson:read",
         "item:put_boissons:read", "item:get_boissons",
-        "post:read:menu"
+        "post:read:menu",
     ])]
     private $gestionnaire;
+
+    #[ORM\Column(type: 'string', nullable: true)]
+    #[Groups(["burgers:read:simple", "collection:post_burger:read",])]
+    protected $ingredientsburger;
+    // #[ORM\Column(type: 'string')]
+    // #[Groups(["burgers:read:simple", "collection:post_burger:read",])]
 
    
 

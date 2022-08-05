@@ -53,15 +53,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 )]
 class Menu extends Produits
 {   
-    #[Groups("menu:read:simple")]
-    
-        protected $prix;
-    #[Groups("menu:read:simple")]
-
-        protected $nom;
-    #[Groups("menu:read:simple")]
-
-        protected $image;
+  
 
     #[ORM\OneToMany(mappedBy: 'menu', targetEntity: MenuBurger::class,cascade:["persist"])]
     #[assert\Valid]
@@ -69,20 +61,21 @@ class Menu extends Produits
     #[assert\Count(min:1,
     minMessage:'il faut au moins une burger dans le menu')]
     // #[SerializedName("burgers")]
-    #[Groups("menu:write")]
-    private $menuburgers;
+    #[Groups("item:getdetails")]
+       private $menuburgers;
     // #[assert\Callback]
     #[ORM\OneToMany(mappedBy: 'menu', targetEntity: MenuTaille::class,cascade:["persist"])]
-    #[Groups("menu:write")]
-    private $menuTailles;
+    #[Groups("item:getdetails")]
+        private $menuTailles;
     // #[assert\Callback]
-    #[Groups("menu:write")]
+    #[Groups("item:getdetails")]
     #[ORM\OneToMany(mappedBy: 'menu', targetEntity: MenuPortion::class,cascade:["persist"])]
     private $Menuportions;
-
+    #[Groups("menu:write")]
     #[ORM\OneToMany(mappedBy: 'menu', targetEntity: CommandeMenu::class)]
     private $commandeMenus;
 
+   
     
 
     
@@ -233,7 +226,8 @@ class Menu extends Produits
 
         return $this;
     }
-    
+
+   
 
    
 

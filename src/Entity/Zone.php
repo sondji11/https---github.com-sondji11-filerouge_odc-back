@@ -30,8 +30,8 @@ class Zone
     #[ORM\Column(type: 'integer')]
     private $id;
     #[ORM\Column(type:"string")]
-    #[Groups(["zone:write","zone:read"])]
-    private $nom ;
+    #[Groups(["zone:read","zone:write"])]
+    private $nomzone ;
     #[ORM\Column(type: 'integer')]
     #[Groups(["zone:read","zone:write"])]
     private $prix;
@@ -41,7 +41,6 @@ class Zone
     private $quartiers;
         
     #[ORM\OneToMany(mappedBy: 'zone', targetEntity: Commande::class)]
-    #[Groups(["zone:read","zone:write"])]
     private $commandes;
 
     #[ORM\OneToMany(mappedBy: 'zone', targetEntity: Livraison::class)]
@@ -59,17 +58,7 @@ class Zone
         return $this->id;
     }
 
-    public function getNom(): ?string
-    {
-        return $this->nom;
-    }
-
-    public function setNom(?string $nom): self
-    {
-        $this->nom_zone = $nom;
-
-        return $this;
-    }
+   
 
     
 
@@ -179,6 +168,26 @@ class Zone
     public function setPrix($prix)
     {
         $this->prix = $prix;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of nomzone
+     */ 
+    public function getNomzone()
+    {
+        return $this->nomzone;
+    }
+
+    /**
+     * Set the value of nomzone
+     *
+     * @return  self
+     */ 
+    public function setNomzone($nomzone)
+    {
+        $this->nomzone = $nomzone;
 
         return $this;
     }

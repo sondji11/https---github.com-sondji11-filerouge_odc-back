@@ -21,7 +21,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
             'denormalization_context'=>['groups' => ['client:write']],
 
-            //'normalization_context'=>['groups' => ['client:read:simple']]
+            'normalization_context'=>['groups' => ['client:read:simple']]
         ],
         
         'get'=>[
@@ -32,7 +32,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
         ]
     ],
-    itemOperations:['put','get']
+    itemOperations:['put'=>[
+        'denormalization_context'=>['groups' => ['client:write:put']],
+
+    ],'get'=>[
+        'normalization_context'=>['groups' => ['client:write:get']],
+
+    ]]
 
 )]
 class Client extends User
@@ -44,11 +50,9 @@ class Client extends User
     #[Groups('client:write,client:read:simple')]
     private $adresse;
 
-    #[Groups('client:write,client:read:simple')]
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups('client:write','client:read:simple','client:write:get','client:write:put'  )]
     private $telephone;
-    #[Groups('client:write')]
-
     #[ORM\OneToMany(mappedBy: 'client', targetEntity: Commande::class)]
     private $commandes;
    

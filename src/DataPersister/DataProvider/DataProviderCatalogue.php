@@ -1,7 +1,7 @@
 <?php
 // api/src/DataProvider/BlogPostCollectionDataProvider.php
 
-namespace App\DataProvider;
+namespace App\DataPersister\DataProvider;
 
 use ApiPlatform\Core\DataProvider\ContextAwareCollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;

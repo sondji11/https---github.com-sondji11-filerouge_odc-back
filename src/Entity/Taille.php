@@ -35,29 +35,38 @@ class Taille
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups(["tailles:read:simple","menu:write"])]
+    #[Groups(["tailles:read:simple","menu:write","item:getdetails"])]
     private $id;
-    #[Groups(["tailles:read:simple","menu:write"])]
+    #[Groups(["tailles:read:simple","menu:write","item:getdetails"])]
     #[ORM\Column(type: 'float', nullable: true)]
     private $prix;
-    #[Groups(["tailles:read:simple","menu:write"])]
+    #[Groups(["tailles:read:simple","menu:write","item:getdetails"])]
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $libelle;
     // #[Groups(["tailles:read:simple"])]
    
-    #[Groups(["tailles:read:simple",])]
-    #[ORM\ManyToMany(targetEntity: Boisson::class, inversedBy: 'tailles')]
-    private $boissons;
-
+    // #[Groups(["tailles:read:simple",'item:getdetails' ])]
+    // #[ORM\ManyToMany(targetEntity: Boisson::class, inversedBy: 'tailles')]
+    // private $boissons;
+    #[Groups(["item:getdetails"])]
     #[ORM\OneToMany(mappedBy: 'taille', targetEntity: MenuTaille::class)]
     private $menuTailles;
+
+    #[Groups(["item:getdetails"])]
+    #[ORM\OneToMany(mappedBy: 'taille', targetEntity: BoissonTaille::class)]
+    private  $boissonTailles;
+
+   
+
+    
 
     public function __construct()
     {
         
         
-        $this->boissons = new ArrayCollection();
+      
         $this->menuTailles = new ArrayCollection();
+        $this->boissonTailles = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -90,29 +99,10 @@ class Taille
     }
 
 
-    /**
-     * @return Collection<int, Boisson>
-     */
-    public function getBoissons(): Collection
-    {
-        return $this->boissons;
-    }
+   
+    
 
-    public function addBoisson(Boisson $boisson): self
-    {
-        if (!$this->boissons->contains($boisson)) {
-            $this->boissons[] = $boisson;
-        }
-
-        return $this;
-    }
-
-    public function removeBoisson(Boisson $boisson): self
-    {
-        $this->boissons->removeElement($boisson);
-
-        return $this;
-    }
+   
 
     /**
      * @return Collection<int, MenuTaille>
@@ -143,4 +133,37 @@ class Taille
 
         return $this;
     }
+
+    /**
+     * @return Collection<int, BoissonTaille>
+     */
+    public function getBoissonTailles(): Collection
+    {
+        return $this->boissonTailles;
+    }
+
+    public function addBoissonTaille(BoissonTaille $boissonTaille): self
+    {
+        if (!$this->boissonTailles->contains($boissonTaille)) {
+            $this->boissonTailles->add($boissonTaille);
+            $boissonTaille->setTaille($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBoissonTaille(BoissonTaille $boissonTaille): self
+    {
+        if ($this->boissonTailles->removeElement($boissonTaille)) {
+            // set the owning side to null (unless already changed)
+            if ($boissonTaille->getTaille() === $this) {
+                $boissonTaille->setTaille(null);
+            }
+        }
+
+        return $this;
+    }
+
+  
+    
 }

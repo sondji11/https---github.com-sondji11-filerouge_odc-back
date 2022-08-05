@@ -15,55 +15,55 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
  *
  */
 class DataPersister implements DataPersisterInterface
-{
-    private $_entityManager;
-
-    private $_passwordEncoder;
-
-    public function __construct(EntityManagerInterface $entityManager,UserPasswordHasherInterface $passwordEncoder ,MailerService $mailerService) {
-        $this->_entityManager = $entityManager;
-        $this->_passwordEncoder = $passwordEncoder;
-        $this->mailerService = $mailerService;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function supports($data, array $context = []): bool
     {
-        return $data instanceof User;
-    }
+        private $_entityManager;
 
-    /**
-     * @param User $data
-     */
-    public function persist($data, array $context = [])
-    {
-    
+        private $_passwordEncoder;
 
-        if ($data->getPassword()) {
-
-            $data->setPassword($this->_passwordEncoder->hashPassword($data, $data->getPassword()));
-
-               // $data->eraseCredentials();
-
+        public function __construct(EntityManagerInterface $entityManager,UserPasswordHasherInterface $passwordEncoder ,MailerService $mailerService) {
+            $this->_entityManager = $entityManager;
+            $this->_passwordEncoder = $passwordEncoder;
+            $this->mailerService = $mailerService;
         }
-        // dd($data);
-       
 
-        $this->_entityManager->persist($data);
+        /**
+         * {@inheritdoc}
+         */
+        public function supports($data, array $context = []): bool
+        {
+            return $data instanceof User;
+        }
+
+        /**
+         * @param User $data
+         */
+        public function persist($data, array $context = [])
+        {
+        
+
+            if ($data->getPassword()) {
+
+                $data->setPassword($this->_passwordEncoder->hashPassword($data, $data->getPassword()));
+
+                // $data->eraseCredentials();
+
+            }
+            // dd($data);
+        
+
+            $this->_entityManager->persist($data);
 
 
-        $this->_entityManager->flush();
-        // $this->mailerService->SendEmail($data);
-    }
+            $this->_entityManager->flush();
+            // $this->mailerService->SendEmail($data);
+        }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function remove($data, array $context = [])
-    {
-        $this->_entityManager->remove($data);
-        $this->_entityManager->flush();
-    }
+        /**
+         * {@inheritdoc}
+         */
+        public function remove($data, array $context = [])
+        {
+            $this->_entityManager->remove($data);
+            $this->_entityManager->flush();
+        }
 }

@@ -19,20 +19,21 @@ class MenuBurger
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups("menu:write")]
+    #[Groups("item:getdetails")]
     private $id;
 
     #[ORM\Column(type: 'integer', length: 255, nullable: true)]
-    #[Groups("menu:write")]
+    #[Groups("item:getdetails")]
     #[assert\positive(Message:"la quantite doit etre superieur a 0")]
     private $quantiterburger;
     
-    #[Groups("menu:write")]
+    #[Groups("item:getdetails")]
     #[ORM\ManyToOne(targetEntity: Burger::class, inversedBy: 'menuBurgers')]
     #[assert\positive(Message:"la quantite doit etre superieur a 0")]
     // #[SerializedName()]
     private $burger;
     #[ORM\ManyToOne(targetEntity: Menu::class, inversedBy: 'menuburgers')]
+
     private $menu;
 
     public function getId(): ?int

@@ -9,6 +9,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
+use Symfony\Component\Validator\Constraints\Cascade;
 
 #[ORM\Entity(repositoryClass: CommandeRepository::class)]
 #[ApiResource(
@@ -23,8 +24,9 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
         "post" =>
         [
             "method" => "post",
-            "normalization_context" => ["groups" => ["commande:read:post"]],
-            "denormalization_context" => ["groups" => ["commande:write:post"]]
+            "denormalization_context" => ["groups" => ["commande:write:post"]],
+            "normalization_context" => ["groups" => ["commande:get:collection"]]
+
         ]
 
     ],
@@ -52,19 +54,20 @@ class Commande
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
     #[Groups("commande:write:post","commande:get:collection",
-        "commande:get:item","commande:read:put","commande:write:put")]
+        "commande:get:item","commande:read:put","commande:write:put",'client:write','client:read:simple')]
+
     private $id;
     
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Groups("commande:get:collection",
         "commande:get:item","commande:read:put","commande:write:put")]
-
     private $numerocommande;
+    
     #[Groups("commande:get:collection",
         "commande:get:item","commande:read:put","commande:write:put")]
-
     #[ORM\Column(type: 'date', nullable: true)]
     private $date;
+
     #[Groups("commande:get:collection",
     "commande:get:item","commande:read:put","commande:write:put")]
     #[ORM\Column(type: 'string', nullable: true)]
@@ -73,30 +76,30 @@ class Commande
     #[ORM\Column(type: 'integer', length: 255, nullable: true)]
     #[Groups(["commande:get:collection"    ])]
     private $montant;
+
     #[ORM\ManyToOne(targetEntity: Zone::class, inversedBy: 'commandes')]
     #[Groups("commande:write:post", "commande:get:collection" )]
     private $zone;
 
-    #[ORM\ManyToOne(targetEntity: Livraison::class, inversedBy: 'commandes')]
+    #[ORM\ManyToOne(targetEntity: Livraison::class, inversedBy: 'commandes',)]
     private $livraison;
-
     #[ORM\ManyToOne(targetEntity: Gestionnaire::class, inversedBy: 'commandes')]
+    // #[Groups( "commande:get:collection" )]
     private $gestionnaire;
-    #[Groups('client:write')]
     #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: 'commandes')]
+    #[Groups("commande:write:post", "commande:get:collection", )]
     private $client;
-
-    #[ORM\OneToMany(mappedBy: 'Commande', targetEntity: CommandeBoisson::class)]
+    #[ORM\OneToMany(mappedBy: 'Commande', targetEntity: CommandeBoisson::class,cascade:["persist"])]
     #[Groups("commande:write:post", "commande:get:collection" )]
     private $commandeBoissons;
     #[Groups("commande:write:post", "commande:get:collection" )]
-    #[ORM\OneToMany(mappedBy: 'commande', targetEntity: CommandeBurger::class)]
+    #[ORM\OneToMany(mappedBy: 'commande', targetEntity: CommandeBurger::class,cascade:["persist"])]
     private $commandeBurgers;
     #[Groups("commande:write:post", "commande:get:collection" )]
-    #[ORM\OneToMany(mappedBy: 'commande', targetEntity: CommandeMenu::class)]
+    #[ORM\OneToMany(mappedBy: 'commande', targetEntity: CommandeMenu::class ,cascade:["persist"])]
     private $commandeMenus;
     #[Groups("commande:write:post", "commande:get:collection" )]
-    #[ORM\OneToMany(mappedBy: 'commande', targetEntity: CommandePortionFrite::class)]
+    #[ORM\OneToMany(mappedBy: 'commande', targetEntity: CommandePortionFrite::class ,cascade:["persist"])]
     private $commandePortionFrites;
 
    
@@ -110,6 +113,7 @@ class Commande
         $this->commandeBurgers = new ArrayCollection();
         $this->commandeMenus = new ArrayCollection();
         $this->commandePortionFrites = new ArrayCollection();
+        $this->numerocommande = "NUM".date('ymdhis');
     }
 
     public function getId(): ?int

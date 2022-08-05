@@ -35,6 +35,7 @@ security:
             # - { path: ^/profile, roles: ROLE_USER }
             - { path: ^/api/email, roles: PUBLIC_ACCESS }
             - { path: ^/api/catalogue , roles: PUBLIC_ACCESS }
+            - { path: ^/api/details , roles: PUBLIC_ACCESS }
             - { path: ^/api/burger, roles: PUBLIC_ACCESS, methods: ['GET'] }
             - { path: ^/api/complement, roles: PUBLIC_ACCESS }
             - { path: ^/api/clients , roles: PUBLIC_ACCESS }

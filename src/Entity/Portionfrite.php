@@ -7,6 +7,7 @@ use App\Repository\PortionfriteRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: PortionfriteRepository::class)]
 #[ApiResource(
@@ -55,10 +56,15 @@ class Portionfrite extends Produits
    
 
     #[ORM\OneToMany(mappedBy: 'portionfrite', targetEntity: MenuPortion::class)]
+    // #[Groups("collection:post_frites:read")]
     private $menuPortions;
 
     #[ORM\OneToMany(mappedBy: 'portionfrite', targetEntity: CommandePortionFrite::class)]
+    // #[Groups("collection:post_frites:read")]
     private $commandePortionFrites;
+
+   
+
 
     public function __construct()
     {
@@ -139,6 +145,9 @@ class Portionfrite extends Produits
 
         return $this;
     }
+
+   
+   
 
    
 }

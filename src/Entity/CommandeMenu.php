@@ -25,7 +25,7 @@ class CommandeMenu
     private $commande;
 
     #[ORM\Column(type: 'integer')]
-    #[Groups("commande:write:post", "commande:get:collection" )]
+    #[Groups("commande:write:post", "commande:get:collection", )]
     private $quantite;
 
     public function getId(): ?int

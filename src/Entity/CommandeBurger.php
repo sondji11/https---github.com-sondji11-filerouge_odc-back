@@ -14,18 +14,18 @@ class CommandeBurger
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups("commande:write:post", "commande:get:collection" )]
+    #[Groups("commande:write:post", "commande:get:collection" ,"item:get_details")]
     private $id;
 
     #[ORM\ManyToOne(targetEntity: Burger::class, inversedBy: 'commandeBurgers')]
-    #[Groups("commande:write:post", "commande:get:collection" )]
+    #[Groups("commande:write:post", "commande:get:collection","item:get_details" )]
     private $burger;
 
     #[ORM\ManyToOne(targetEntity: Commande::class, inversedBy: 'commandeBurgers')]
     private $commande;
 
     #[ORM\Column(type: 'integer')]
-    #[Groups("commande:write:post", "commande:get:collection" )]
+    #[Groups("commande:write:post", "commande:get:collection","item:get_details" )]
     private $quantite;
 
     public function getId(): ?int

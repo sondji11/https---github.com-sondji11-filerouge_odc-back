@@ -12,35 +12,35 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: BurgerRepository::class)]
  #[ApiResource (
-                   collectionOperations:[
-                       "get"=>[
-                       'method' => 'get',
-                       'status' => Response::HTTP_OK,
-                       'normalization_context' => ['groups' => ['burgers:read:simple']],
-                       ],
-                       "post"=>[
-                       'method' => 'post',
-                       "security" => "is_granted('ROLE_GESTIONNAIRE')",
-                       "security_message" => "Vous n'êtes pas autorisé à utiliser ce service",
-                       'denormalization_context' => ['groups' => ['collection:post_burger:read']],
-                       
-                       ]
-                       ],
-                       itemOperations:[
-                                       "get"=>[    
-                                       'method' => 'get',
-                                       'normalization_context' => ['groups' => ['item:get_burger:read']],
-                                       ],
-                                       "put"=>[
-                                           "security" => "is_granted('ROLE_GESTIONNAIRE')",
-                                           "security_message"=>"Vous n'avez pas access à cette Ressource",
-                                           "normalization_context" => ["groups" => ["item:put_burger:read"]],
-                                           "denormalization_context" => ["groups" => ["item:put_burger:write"]]
-                                          
-                                           ],
-                                   ] ,
-                 attributes: ["pagination_items_per_page" => 5]
-                  )]
+                                                       collectionOperations:[
+                                                           "get"=>[
+                                                           'method' => 'get',
+                                                           'status' => Response::HTTP_OK,
+                                                           'normalization_context' => ['groups' => ['burgers:read:simple']],
+                                                           ],
+                                                           "post"=>[
+                                                           'method' => 'post',
+                                                           "security" => "is_granted('ROLE_GESTIONNAIRE')",
+                                                           "security_message" => "Vous n'êtes pas autorisé à utiliser ce service",
+                                                           'denormalization_context' => ['groups' => ['collection:post_burger:read']],
+                                                           
+                                                           ]
+                                                           ],
+                                                           itemOperations:[
+                                                                           "get"=>[    
+                                                                           'method' => 'get',
+                                                                           'normalization_context' => ['groups' => ['item:get_burger:read']],
+                                                                           ],
+                                                                           "put"=>[
+                                                                               "security" => "is_granted('ROLE_GESTIONNAIRE')",
+                                                                               "security_message"=>"Vous n'avez pas access à cette Ressource",
+                                                                               "normalization_context" => ["groups" => ["item:put_burger:read"]],
+                                                                               "denormalization_context" => ["groups" => ["item:put_burger:write"]]
+                                                                              
+                                                                               ],
+                                                                       ] ,
+                                                     attributes: ["pagination_items_per_page" => 5]
+                                                      )]
  
 
 class Burger extends Produits
@@ -50,20 +50,29 @@ class Burger extends Produits
     private $menu;
 
     #[ORM\OneToMany(mappedBy: 'burger', targetEntity: MenuBurger::class)]
+    // #[Groups()]  
+
     private $menuBurgers;
 
     public function __construct()
     {
         $this->menuBurgers = new ArrayCollection();
         $this->commandeBurgers = new ArrayCollection();
+        
     }
 
      #[ORM\ManyToOne(targetEntity: Gestionnaire::class, inversedBy: 'burgers')]
+//    #[Groups('collection:post_burger:read')]  
     private $gestionnaire;
 
      #[ORM\OneToMany(mappedBy: 'burger', targetEntity: CommandeBurger::class)]
-     private $commandeBurgers; 
+     private $commandeBurgers;
 
+     
+
+     
+
+     
     
 
     public function getMenu(): ?Menu
@@ -161,6 +170,21 @@ class Burger extends Produits
 
         return $this;
     }
+
+    // public function getDetails(): ?Details
+    // {
+    //     return $this->details;
+    // }
+
+    // public function setDetails(?Details $details): self
+    // {
+    //     $this->details = $details;
+
+    //     return $this;
+    // }
+
+   
+    
 
    
 }

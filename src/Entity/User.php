@@ -7,12 +7,12 @@ use App\Repository\UserRepository;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 
 
 #[ApiResource]
-
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\InheritanceType("JOINED")]
 #[ORM\DiscriminatorColumn(name:"type", type:"string")]
@@ -27,7 +27,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type:'integer')]
     #[Groups(['write','client:read:simple', "collection:post_burger:read", "collection:post_frites:read", "collection:post_boissons:read", "collection:post_taille:read",
     "item:put_burger:read", "item:put_frites:read", "item:put_taille:read", "item:put_boissons:read",
-    "commande:write:post",
+    "commande:write:post","commande:get:collection",
     "post:livraison:read", "post:livraison:write"])]
     protected $id;
 
@@ -40,13 +40,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     protected $roles = [];
 
     #[Groups(['client:write'])]
-    #[ORM\Column(type: 'string',)]
+    #[ORM\Column(type: 'string')]
     protected $password;
-
-
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: 'string',length: 255,nullable:true)]
     #[Groups(['client:write','client:read:simple'])] 
     protected $nom;
+    #[Groups(['client:write','client:read:simple'])] 
+    #[ORM\Column(type: 'string', length: 255,nullable:true)]
+    protected $token;
+
+    #[SerializedName("passwords")]
+    #[Groups(['client:write','client:read:simple'])] 
+    protected $plainPassword;
+
+    #[ORM\Column(type: 'datetime',nullable:true)]
+    #[Groups(["client:write'"])]
+    protected $expireAt;
 
     
 
@@ -137,6 +146,66 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setNom($nom)
     {
         $this->nom = $nom;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of token
+     */ 
+    public function getToken()
+    {
+        return $this->token;
+    }
+
+    /**
+     * Set the value of token
+     *
+     * @return  self
+     */ 
+    public function setToken($token)
+    {
+        $this->token = $token;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of plainPassword
+     */ 
+    public function getPlainPassword()
+    {
+        return $this->plainPassword;
+    }
+
+    /**
+     * Set the value of plainPassword
+     *
+     * @return  self
+     */ 
+    public function setPlainPassword($plainPassword)
+    {
+        $this->plainPassword = $plainPassword;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of expireAt
+     */ 
+    public function getExpireAt()
+    {
+        return $this->expireAt;
+    }
+
+    /**
+     * Set the value of expireAt
+     *
+     * @return  self
+     */ 
+    public function setExpireAt($expireAt)
+    {
+        $this->expireAt = $expireAt;
 
         return $this;
     }

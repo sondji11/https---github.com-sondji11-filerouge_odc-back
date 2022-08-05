@@ -16,17 +16,14 @@ class MenuPortion
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups("menu:write","collection:post_frites:read")]
+    #[Groups("menu:write","collection:post_frites:read","item:getdetails")]
     private $id;
     #[Groups("menu:write")]
     #[ORM\Column(type: 'integer', length: 255, nullable: true)]
     private $quantitefrite;
-    #[Groups("menu:write")]
+    #[Groups("menu:write","item:getdetails")]
     #[ORM\ManyToOne(targetEntity: Portionfrite::class, inversedBy: 'menuPortions')]
     private $portionfrite;
-
-
-
     #[ORM\OneToMany(mappedBy: 'menu', targetEntity: self::class)]
     private $menuPortions;
 

@@ -39,7 +39,7 @@ class Quartier
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups("quartier:write")]
+    // #[Groups("quartier:write")]
 
     private $id;
    

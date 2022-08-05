@@ -30,13 +30,11 @@ class CommandeDataPersister implements ContextAwareDataPersisterInterface
      if($data instanceof Commande)
          {
             $data->setMontant($this->commandecalcul->calculprix($data));
-            // dd($data);
-
-
         }
-        
-        $this->_entityManager->persist($data);
-        $this->_entityManager->flush();
+            
+        $this->entityManager->persist($data);
+        // dd($data);
+        $this->entityManager->flush();
 
     }
 
